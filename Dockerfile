@@ -13,11 +13,6 @@ ENV HF_HOME=/app/.cache/huggingface
 ENV HF_HUB_DISABLE_TELEMETRY=1
 ENV HF_HUB_DISABLE_PROGRESS_BARS=1
 
-RUN pip install --no-cache-dir huggingface_hub[cli]
-RUN huggingface-cli download $MODEL
-
-ENV HF_HUB_OFFLINE=1
-
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
