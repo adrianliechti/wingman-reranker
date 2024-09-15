@@ -1,3 +1,4 @@
+import os
 import torch
 import uvicorn
 
@@ -10,16 +11,15 @@ from transformers import AutoModelForSequenceClassification
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 model = AutoModelForSequenceClassification.from_pretrained(
-    'jinaai/jina-reranker-v2-base-multilingual',
+    os.getenv("MODEL", "jinaai/jina-reranker-v2-base-multilingual"),
     torch_dtype="auto",
     trust_remote_code=True,
-)
+).to(device)
 
-model.to(device)
 model.eval()
 
 app = FastAPI(
-    title="LLM Platform Tools"
+    title="LLM Platform Reranker"
 )
 
 class RerankRequest(BaseModel):
@@ -29,6 +29,7 @@ class RerankRequest(BaseModel):
     top_n: Optional[int] = None
 
 @app.post("/rerank")
+@app.post("/v1/rerank")
 async def rerank(request: RerankRequest):
     query = request.query
     documents = request.documents
