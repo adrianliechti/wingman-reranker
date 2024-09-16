@@ -1,6 +1,4 @@
-accelerate
 einops
 fastapi
-torch
-transformers
+transformers[torch]
 uvicorn

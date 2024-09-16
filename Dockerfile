@@ -2,8 +2,6 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-ENV MODEL=jinaai/jina-reranker-v2-base-multilingual
-
 ENV HF_HOME=/app/.cache/huggingface
 ENV HF_HUB_VERBOSITY=error
 ENV HF_HUB_DISABLE_TELEMETRY=1
