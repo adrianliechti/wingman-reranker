@@ -8,13 +8,14 @@ from pydantic import BaseModel
 
 from transformers import AutoModelForSequenceClassification
 
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
 model = AutoModelForSequenceClassification.from_pretrained(
     os.getenv("MODEL", "jinaai/jina-reranker-v2-base-multilingual"),
     torch_dtype="auto",
     trust_remote_code=True,
-).to(device)
+)
+
+device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+model = model.to(device)
 
 model.eval()
 
@@ -30,7 +31,7 @@ class RerankRequest(BaseModel):
 
 @app.post("/rerank")
 @app.post("/v1/rerank")
-async def rerank(request: RerankRequest):
+def rerank(request: RerankRequest):
     query = request.query
     documents = request.documents
     
