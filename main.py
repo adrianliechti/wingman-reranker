@@ -1,23 +1,14 @@
 import os
-import torch
 import uvicorn
 
 from fastapi import FastAPI
 from typing import List, Optional
 from pydantic import BaseModel
 
-from transformers import AutoModelForSequenceClassification
+from sentence_transformers import CrossEncoder
 
-model = AutoModelForSequenceClassification.from_pretrained(
-    os.getenv("MODEL", "jinaai/jina-reranker-v2-base-multilingual"),
-    torch_dtype="auto",
-    trust_remote_code=True,
-)
-
-device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
-model = model.to(device)
-
-model.eval()
+model_name = os.getenv("MODEL", "jinaai/jina-reranker-v2-base-multilingual")
+model = CrossEncoder(model_name, trust_remote_code=True)
 
 app = FastAPI(
     title="LLM Platform Reranker"
@@ -38,16 +29,24 @@ def rerank(request: RerankRequest):
     top_n = request.top_n
 
     pairs = [[query, doc] for doc in documents]
-    scores = model.compute_score(pairs, max_length=1024)
+    scores = model.predict(pairs)
 
-    results = [{"index": i, "document": { "text": doc }, "relevance_score": score} for i, (doc, score) in enumerate(zip(documents, scores))]
-    results = sorted(results, key=lambda x: x['relevance_score'], reverse=True)
+    results = [
+        {
+            "index": i,
+            "document": {"text": doc},
+            "relevance_score": float(scores[i])
+        }
+        for i, doc in enumerate(documents)
+    ]
     
+    results = sorted(results, key=lambda x: x['relevance_score'], reverse=True)
+
     if top_n is not None:
         results = results[:top_n]
 
     return {
-        "model": model.name_or_path,
+        "model": model_name,
         "results": results
     }
 

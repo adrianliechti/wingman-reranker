@@ -1,4 +1,4 @@
 einops
 fastapi
-transformers[torch]
+sentence-transformers
 uvicorn
