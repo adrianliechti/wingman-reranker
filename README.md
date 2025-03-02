@@ -1,11 +1,11 @@
-# LLM Platform Reranker
+# Wingman Platform Reranker
 
 A simple FastAPI/Transformers Reranker implementation mimics the [Jina AI Reranker API](https://jina.ai/reranker/).
 
 Defaults to [jinaai/jina-reranker-v2-base-multilingual](https://huggingface.co/jinaai/jina-reranker-v2-base-multilingual). Can be overwritten using `MODEL` environment variable.
 
 ```bash
-docker run -it --rm -p 8000:8000 ghcr.io/adrianliechti/llama-reranker
+docker run -it --rm -p 8000:8000 ghcr.io/adrianliechti/wingman-reranker
 ```
 
 ```bash

@@ -3,7 +3,7 @@
 version: "3"
 
 vars:
-  REPOSITORY: ghcr.io/adrianliechti/llama-reranker
+  REPOSITORY: ghcr.io/adrianliechti/wingman-reranker
 
 tasks:
   run:
